@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>数字系统实验台</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body data-page="{{ page }}">
+  <div class="app-layout">
+    <aside class="sidebar card">
+      <h2>功能导航</h2>
+      <a href="{{ url_for('converter_page') }}" class="nav-item {% if page == 'converter' %}active{% endif %}">① 数字转换与编码</a>
+      <a href="{{ url_for('arithmetic_page') }}" class="nav-item {% if page == 'arithmetic' %}active{% endif %}">② 加减法与溢出判断</a>
+      <a href="#" class="nav-item disabled">③ 拓展页面（可继续添加）</a>
+      <p class="hint">左侧可扩展更多实验模块。</p>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar card">
+        <h1>数字表示与运算可视化平台</h1>
+        <div id="clock" class="clock">--:--:--</div>
+      </header>
+
+      <section class="workspace card">
+        <div id="converter-panel" class="panel {% if page != 'converter' %}hidden{% endif %}">
+          <h3>两个数字转换 + 原码/反码/补码/移码</h3>
+          <div class="grid two-col">
+            <label>数字 A <input id="a" placeholder="例如 -1010 或 26" /></label>
+            <label>A 进制
+              <select id="a-base">
+                <option value="2">二进制</option><option value="8">八进制</option><option value="10" selected>十进制</option><option value="16">十六进制</option>
+              </select>
+            </label>
+            <label>数字 B <input id="b" placeholder="例如 17" /></label>
+            <label>B 进制
+              <select id="b-base">
+                <option value="2">二进制</option><option value="8">八进制</option><option value="10" selected>十进制</option><option value="16">十六进制</option>
+              </select>
+            </label>
+            <label>输出进制
+              <select id="out-base">
+                <option value="2">二进制</option><option value="8">八进制</option><option value="10" selected>十进制</option><option value="16">十六进制</option>
+              </select>
+            </label>
+            <label>位宽
+              <select id="width">
+                <option value="">自动推断</option><option value="8">8位</option><option value="16">16位</option><option value="32">32位</option>
+              </select>
+            </label>
+          </div>
+          <button id="convert-btn" class="btn">开始转换</button>
+          <pre id="convert-result" class="result"></pre>
+        </div>
+
+        <div id="arithmetic-panel" class="panel {% if page != 'arithmetic' %}hidden{% endif %}">
+          <h3>加减法 + 溢出判断 + 可视化</h3>
+          <div class="grid two-col">
+            <label>数字 A <input id="calc-a" placeholder="例如 120" /></label>
+            <label>数字 B <input id="calc-b" placeholder="例如 20" /></label>
+            <label>输入进制
+              <select id="calc-base">
+                <option value="2">二进制</option><option value="8">八进制</option><option value="10" selected>十进制</option><option value="16">十六进制</option>
+              </select>
+            </label>
+            <label>位宽
+              <select id="calc-width"><option value="8">8位</option><option value="16">16位</option><option value="32">32位</option></select>
+            </label>
+          </div>
+          <div class="btn-row">
+            <button data-op="+" class="btn calc-btn">执行加法</button>
+            <button data-op="-" class="btn calc-btn">执行减法</button>
+          </div>
+          <pre id="calc-result" class="result"></pre>
+          <div class="overflow-bar-wrap">
+            <div id="overflow-bar" class="overflow-bar"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="chart-area card">
+        <h3>动态统计图表（操作类型与进制使用次数）</h3>
+        <canvas id="stats-chart"></canvas>
+      </section>
+    </main>
+
+    <aside class="history card">
+      <h2>历史记录</h2>
+      <div id="history-list" class="history-list"></div>
+    </aside>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
