@@ -9,21 +9,44 @@
 </head>
 <body data-page="{{ page }}">
   <div class="app-layout">
-    <aside class="sidebar card">
-      <h2>功能导航</h2>
+    <aside class="sidebar card glass">
+      <div class="sidebar-head">
+        <p class="kicker">Digital Lab</p>
+        <h2>智能实验导航</h2>
+      </div>
       <a href="{{ url_for('converter_page') }}" class="nav-item {% if page == 'converter' %}active{% endif %}">① 数字转换与编码</a>
       <a href="{{ url_for('arithmetic_page') }}" class="nav-item {% if page == 'arithmetic' %}active{% endif %}">② 加减法与溢出判断</a>
-      <a href="#" class="nav-item disabled">③ 拓展页面（可继续添加）</a>
-      <p class="hint">左侧可扩展更多实验模块。</p>
+      <a href="#workspace" class="nav-item">③ 工作台</a>
+      <a href="#stats-panel" class="nav-item">④ 统计看板</a>
+
+      <div class="sidebar-widget">
+        <h4>实验建议</h4>
+        <ul>
+          <li>先用 8 位测试边界值，再切 16/32 位验证。</li>
+          <li>优先对比“数学结果”和“截断有符号值”。</li>
+          <li>历史记录支持滚动，可快速复盘操作轨迹。</li>
+        </ul>
+      </div>
+
+      <p class="hint">左侧导航已升级，可作为后续实验模块入口。</p>
     </aside>
 
     <main class="main-content">
-      <header class="topbar card">
-        <h1>数字表示与运算可视化平台</h1>
+      <header class="topbar card glass">
+        <div>
+          <h1>数字表示与运算可视化平台</h1>
+          <p class="sub-title">编码 · 运算 · 溢出 · 统计，一站式联动实验</p>
+        </div>
         <div id="clock" class="clock">--:--:--</div>
       </header>
 
-      <section class="workspace card">
+      <nav class="floating-nav card">
+        <a href="#workspace">工作台</a>
+        <a href="#history-panel">历史记录</a>
+        <a href="#stats-panel">统计数据</a>
+      </nav>
+
+      <section id="workspace" class="workspace card">
         <div id="converter-panel" class="panel {% if page != 'converter' %}hidden{% endif %}">
           <h3>两个数字转换 + 原码/反码/补码/移码</h3>
           <div class="grid two-col">
@@ -78,16 +101,18 @@
           </div>
         </div>
       </section>
+    </main>
 
-      <section class="chart-area card">
+    <aside class="right-rail">
+      <section id="history-panel" class="history card">
+        <h2>历史记录</h2>
+        <div id="history-list" class="history-list"></div>
+      </section>
+
+      <section id="stats-panel" class="chart-area card">
         <h3>动态统计图表（操作类型与进制使用次数）</h3>
         <canvas id="stats-chart"></canvas>
       </section>
-    </main>
-
-    <aside class="history card">
-      <h2>历史记录</h2>
-      <div id="history-list" class="history-list"></div>
     </aside>
   </div>
 
