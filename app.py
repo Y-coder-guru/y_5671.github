@@ -51,6 +51,13 @@ def _mask(width: int) -> int:
     return (1 << width) - 1
 
 
+def validate_width(width: int) -> int:
+    valid = {4, 8, 16, 32}
+    if width not in valid:
+        raise InputError(f"仅支持位宽 {sorted(valid)}。")
+    return width
+
+
 def compute_codes(value: int, width: int) -> Dict[str, str]:
     if width < 2:
         raise InputError("位宽必须至少为 2。")
@@ -89,7 +96,7 @@ def compute_codes(value: int, width: int) -> Dict[str, str]:
 
 def infer_width(values: List[int], requested: int | None = None) -> int:
     if requested:
-        return requested
+        return validate_width(requested)
 
     max_abs = max(abs(v) for v in values) if values else 0
     needed = max_abs.bit_length() + 1
@@ -98,6 +105,47 @@ def infer_width(values: List[int], requested: int | None = None) -> int:
     if needed <= 16:
         return 16
     return 32
+
+
+def cla_add(a: int, b: int, width: int) -> Dict:
+    mask = _mask(width)
+    a_u = a & mask
+    b_u = b & mask
+
+    bits = []
+    p_bits: List[int] = []
+    g_bits: List[int] = []
+
+    for i in range(width):
+        ai = (a_u >> i) & 1
+        bi = (b_u >> i) & 1
+        p = ai ^ bi
+        g = ai & bi
+        p_bits.append(p)
+        g_bits.append(g)
+        bits.append({"index": i, "a": ai, "b": bi, "p": p, "g": g})
+
+    carries = [0] * (width + 1)
+    for i in range(width):
+        carries[i + 1] = g_bits[i] | (p_bits[i] & carries[i])
+
+    sum_bits = [p_bits[i] ^ carries[i] for i in range(width)]
+    sum_unsigned = sum(bit << i for i, bit in enumerate(sum_bits))
+    max_val = (1 << (width - 1)) - 1
+    sum_signed = sum_unsigned - (1 << width) if sum_unsigned > max_val else sum_unsigned
+    overflow = carries[width] ^ carries[width - 1]
+
+    return {
+        "a_binary": format(a_u, f"0{width}b"),
+        "b_binary": format(b_u, f"0{width}b"),
+        "sum_binary": format(sum_unsigned, f"0{width}b"),
+        "sum_signed": sum_signed,
+        "carry_in_msb": carries[width - 1],
+        "carry_out": carries[width],
+        "overflow": bool(overflow),
+        "bit_rows": bits,
+        "carry_chain": carries,
+    }
 
 
 def add_history(item_type: str, payload: Dict) -> None:
@@ -176,7 +224,7 @@ def api_calc():
         a = parse_number(str(data.get("a", "")), int(data.get("base", 10)))
         b = parse_number(str(data.get("b", "")), int(data.get("base", 10)))
         op = data.get("op", "+")
-        width = int(data.get("width", 8))
+        width = validate_width(int(data.get("width", 8)))
 
         if op not in {"+", "-"}:
             raise InputError("仅支持 + 或 - 运算。")
@@ -197,6 +245,8 @@ def api_calc():
             "wrapped_binary": format(wrapped, f"0{width}b"),
             "wrapped_signed": wrapped - (1 << width) if wrapped > max_val else wrapped,
         }
+        if op == "+":
+            payload["cla"] = cla_add(a, b, width)
 
         add_history(
             "arithmetic",
