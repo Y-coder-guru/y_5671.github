@@ -76,7 +76,7 @@
             </label>
             <label>位宽
               <select id="width">
-                <option value="">自动推断</option><option value="8">8位</option><option value="16">16位</option><option value="32">32位</option>
+                <option value="">自动推断</option><option value="4">4位</option><option value="8">8位</option><option value="16">16位</option><option value="32">32位</option>
               </select>
             </label>
           </div>
@@ -97,7 +97,7 @@
               </select>
             </label>
             <label>位宽
-              <select id="calc-width"><option value="8">8位</option><option value="16">16位</option><option value="32">32位</option></select>
+              <select id="calc-width"><option value="4">4位</option><option value="8" selected>8位</option><option value="16">16位</option><option value="32">32位</option></select>
             </label>
           </div>
           <div class="btn-row">
@@ -107,6 +107,27 @@
           <pre id="calc-result" class="result"></pre>
           <div class="overflow-bar-wrap">
             <div id="overflow-bar" class="overflow-bar"></div>
+          </div>
+          <div id="cla-visual" class="cla-visual hidden">
+            <h4>超前进位（CLA）可视化（仅加法）</h4>
+            <div id="cla-summary" class="cla-summary"></div>
+            <div id="cla-carry-chain" class="cla-carry-chain"></div>
+            <div class="cla-table-wrap">
+              <table class="cla-table">
+                <thead>
+                  <tr>
+                    <th>位 i</th>
+                    <th>Aᵢ</th>
+                    <th>Bᵢ</th>
+                    <th>Pᵢ=Aᵢ⊕Bᵢ</th>
+                    <th>Gᵢ=Aᵢ·Bᵢ</th>
+                    <th>Cᵢ</th>
+                    <th>Sᵢ=Pᵢ⊕Cᵢ</th>
+                  </tr>
+                </thead>
+                <tbody id="cla-table-body"></tbody>
+              </table>
+            </div>
           </div>
         </div>
       </section>

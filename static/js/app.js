@@ -69,6 +69,7 @@ for (const btn of document.querySelectorAll(".calc-btn")) {
   btn.addEventListener("click", async () => {
     const resultBox = byId("calc-result");
     const overflowBar = byId("overflow-bar");
+    const claVisual = byId("cla-visual");
     try {
       const payload = {
         a: byId("calc-a").value,
@@ -92,14 +93,59 @@ for (const btn of document.querySelectorAll(".calc-btn")) {
 
       overflowBar.classList.toggle("danger", r.overflow);
       overflowBar.style.width = r.overflow ? "100%" : "55%";
+      renderCla(r, payload.op, payload.width);
 
       await Promise.all([refreshHistory(), refreshStats()]);
     } catch (err) {
       showError(resultBox, err.message);
       overflowBar.classList.add("danger");
       overflowBar.style.width = "100%";
+      if (claVisual) claVisual.classList.add("hidden");
     }
   });
+}
+
+function renderCla(result, op, width) {
+  const panel = byId("cla-visual");
+  const summary = byId("cla-summary");
+  const chain = byId("cla-carry-chain");
+  const tableBody = byId("cla-table-body");
+  if (!panel || !summary || !chain || !tableBody) return;
+
+  if (op !== "+" || !result.cla) {
+    panel.classList.add("hidden");
+    return;
+  }
+
+  panel.classList.remove("hidden");
+  const cla = result.cla;
+  summary.innerHTML = [
+    `<span><strong>A</strong>=${cla.a_binary}</span>`,
+    `<span><strong>B</strong>=${cla.b_binary}</span>`,
+    `<span><strong>S</strong>=${cla.sum_binary}</span>`,
+    `<span><strong>C${width}</strong>=${cla.carry_out}</span>`,
+    `<span><strong>溢出(V)</strong>=C${width - 1}⊕C${width}=${cla.carry_in_msb}⊕${cla.carry_out}=${cla.overflow ? 1 : 0}</span>`,
+  ].join("");
+
+  chain.innerHTML = cla.carry_chain
+    .map((carry, idx) => `<span class="carry-node">C${idx}=${carry}</span>`)
+    .join('<span class="carry-arrow">→</span>');
+
+  tableBody.innerHTML = "";
+  for (const row of cla.bit_rows.slice().reverse()) {
+    const tr = document.createElement("tr");
+    const sBit = row.p ^ cla.carry_chain[row.index];
+    tr.innerHTML = `
+      <td>${row.index}</td>
+      <td>${row.a}</td>
+      <td>${row.b}</td>
+      <td>${row.p}</td>
+      <td>${row.g}</td>
+      <td>${cla.carry_chain[row.index]}</td>
+      <td>${sBit}</td>
+    `;
+    tableBody.appendChild(tr);
+  }
 }
 
 async function refreshHistory() {
