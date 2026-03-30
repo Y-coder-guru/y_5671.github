@@ -15,10 +15,12 @@
         <h2>智能实验导航</h2>
       </div>
 
+
       <a href="{{ url_for('converter_page') }}" class="nav-item {% if page == 'converter' %}active{% endif %}">① 数字转换与编码</a>
       <a href="{{ url_for('arithmetic_page') }}" class="nav-item {% if page == 'arithmetic' %}active{% endif %}">② 加减法与溢出判断</a>
       <a href="#admin-panel" class="nav-item">③ 后台管理概览</a>
       <a href="#guide-panel" class="nav-item">④ 实验操作指南</a>
+
 
       <div class="sidebar-widget">
         <h4>实验建议</h4>
@@ -29,11 +31,13 @@
         </ul>
       </div>
 
+
       <div class="status-mini">
         <span class="tag">在线</span>
         <span class="tag">模块 4/4</span>
       </div>
       <p class="hint">左侧导航已升级为可点击功能区入口，便于后续继续扩展。</p>
+
     </aside>
 
     <main class="main-content">
@@ -49,7 +53,9 @@
         <a href="#workspace">工作台</a>
         <a href="#history-panel">历史记录</a>
         <a href="#stats-panel">统计数据</a>
+
         <a href="#admin-panel">后台管理</a>
+
       </nav>
 
       <section id="workspace" class="workspace card">
@@ -107,6 +113,7 @@
           </div>
         </div>
       </section>
+    </main>
 
       <section class="extra-grid">
         <article id="admin-panel" class="extra-card card">
@@ -139,6 +146,7 @@
         <h3>动态统计图表（操作类型与进制使用次数）</h3>
         <canvas id="stats-chart"></canvas>
       </section>
+
     </aside>
   </div>
 
