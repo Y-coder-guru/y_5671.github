@@ -112,7 +112,7 @@ def add_history(item_type: str, payload: Dict) -> None:
 
 @app.route("/")
 def index():
-    return render_template("index.html", page="converter")
+    return converter_page()
 
 
 @app.route("/converter")
@@ -123,6 +123,16 @@ def converter_page():
 @app.route("/arithmetic")
 def arithmetic_page():
     return render_template("index.html", page="arithmetic")
+
+
+@app.route("/admin")
+def admin_page():
+    return render_template("index.html", page="admin")
+
+
+@app.route("/guide")
+def guide_page():
+    return render_template("index.html", page="guide")
 
 
 @app.post("/api/convert")
