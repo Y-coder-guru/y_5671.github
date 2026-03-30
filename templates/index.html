@@ -9,21 +9,50 @@
 </head>
 <body data-page="{{ page }}">
   <div class="app-layout">
-    <aside class="sidebar card">
-      <h2>功能导航</h2>
+    <aside class="sidebar card glass">
+      <div class="sidebar-head">
+        <p class="kicker">Digital Lab</p>
+        <h2>智能实验导航</h2>
+      </div>
+
       <a href="{{ url_for('converter_page') }}" class="nav-item {% if page == 'converter' %}active{% endif %}">① 数字转换与编码</a>
       <a href="{{ url_for('arithmetic_page') }}" class="nav-item {% if page == 'arithmetic' %}active{% endif %}">② 加减法与溢出判断</a>
-      <a href="#" class="nav-item disabled">③ 拓展页面（可继续添加）</a>
-      <p class="hint">左侧可扩展更多实验模块。</p>
+      <a href="#admin-panel" class="nav-item">③ 后台管理概览</a>
+      <a href="#guide-panel" class="nav-item">④ 实验操作指南</a>
+
+      <div class="sidebar-widget">
+        <h4>实验建议</h4>
+        <ul>
+          <li>先用 8 位测试边界值，再切 16/32 位验证。</li>
+          <li>优先对比“数学结果”和“截断有符号值”。</li>
+          <li>历史记录支持滚动，可快速复盘操作轨迹。</li>
+        </ul>
+      </div>
+
+      <div class="status-mini">
+        <span class="tag">在线</span>
+        <span class="tag">模块 4/4</span>
+      </div>
+      <p class="hint">左侧导航已升级为可点击功能区入口，便于后续继续扩展。</p>
     </aside>
 
     <main class="main-content">
-      <header class="topbar card">
-        <h1>数字表示与运算可视化平台</h1>
+      <header class="topbar card glass">
+        <div>
+          <h1>数字表示与运算可视化平台</h1>
+          <p class="sub-title">编码 · 运算 · 溢出 · 统计，一站式联动实验</p>
+        </div>
         <div id="clock" class="clock">--:--:--</div>
       </header>
 
-      <section class="workspace card">
+      <nav class="floating-nav card">
+        <a href="#workspace">工作台</a>
+        <a href="#history-panel">历史记录</a>
+        <a href="#stats-panel">统计数据</a>
+        <a href="#admin-panel">后台管理</a>
+      </nav>
+
+      <section id="workspace" class="workspace card">
         <div id="converter-panel" class="panel {% if page != 'converter' %}hidden{% endif %}">
           <h3>两个数字转换 + 原码/反码/补码/移码</h3>
           <div class="grid two-col">
@@ -79,15 +108,37 @@
         </div>
       </section>
 
-      <section class="chart-area card">
-        <h3>动态统计图表（操作类型与进制使用次数）</h3>
-        <canvas id="stats-chart"></canvas>
+      <section class="extra-grid">
+        <article id="admin-panel" class="extra-card card">
+          <h3>后台管理概览</h3>
+          <p>可在这里统一查看实验服务状态、数据源配置和功能开关（示例模块，可继续接入真实后台接口）。</p>
+          <div class="chip-row">
+            <span class="chip">服务状态：正常</span>
+            <span class="chip">日志级别：INFO</span>
+            <span class="chip">存储：已连接</span>
+          </div>
+        </article>
+        <article id="guide-panel" class="extra-card card">
+          <h3>实验操作指南</h3>
+          <ol>
+            <li>先在转换模块验证不同进制输入是否符合预期。</li>
+            <li>再切到加减法观察溢出条变化与截断结果。</li>
+            <li>最后在右侧对照历史记录和统计图做复盘。</li>
+          </ol>
+        </article>
       </section>
     </main>
 
-    <aside class="history card">
-      <h2>历史记录</h2>
-      <div id="history-list" class="history-list"></div>
+    <aside class="right-rail">
+      <section id="history-panel" class="history card">
+        <h2>历史记录</h2>
+        <div id="history-list" class="history-list"></div>
+      </section>
+
+      <section id="stats-panel" class="chart-area card">
+        <h3>动态统计图表（操作类型与进制使用次数）</h3>
+        <canvas id="stats-chart"></canvas>
+      </section>
     </aside>
   </div>
 
